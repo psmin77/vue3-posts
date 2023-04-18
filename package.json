@@ -13,7 +13,8 @@
     "bootstrap": "^5.2.3",
     "bootstrap-icons": "^1.10.4",
     "popper.js": "^1.16.1",
-    "vue": "^3.2.47"
+    "vue": "^3.2.47",
+    "vue-router": "^4.1.6"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",
