@@ -16,7 +16,13 @@ const routes = [
 	{ path: '/about', name: 'about', component: AboutView },
 	{ path: '/posts', name: 'PostList', component: PostListView },
 	{ path: '/posts/create', name: 'PostCreate', component: PostCreateView },
-	{ path: '/posts/:id', name: 'PostDetail', component: PostDetailView },
+	{
+		path: '/posts/:id',
+		name: 'PostDetail',
+		component: PostDetailView,
+		// props: true,
+		props: route => ({ id: parseInt(route.params.id) }),
+	},
 	{ path: '/posts/:id/edit', name: 'PostEdit', component: PostEditView },
 	{ path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFoundView },
 	{
