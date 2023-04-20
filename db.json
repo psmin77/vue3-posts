@@ -2,20 +2,20 @@
   "posts": [
     {
       "id": 1,
-      "title": "제목1",
-      "content": "내요오오옹111",
+      "title": "알림창문구",
+      "content": "수정 알림창 문구",
       "createAt": "2023-01-01"
     },
     {
       "id": 2,
-      "title": "제목2",
-      "content": "내요오오옹2222",
+      "title": "이제됨?",
+      "content": "석세스되냐거",
       "createAt": "2023-02-01"
     },
     {
       "id": 3,
-      "title": "제목3",
-      "content": "내요오오옹3333",
+      "title": "이건 날짜 있어야돼",
+      "content": "수정해도 날짜 있음",
       "createAt": "2022-06-07"
     },
     {
@@ -25,10 +25,9 @@
       "createAt": "2020-03-03"
     },
     {
-      "id": 5,
-      "title": "제목555",
-      "content": "내요오오옹5",
-      "createAt": "2023-03-07"
+      "title": "수정완료 스타일",
+      "content": "수정완료 서타일",
+      "id": 5
     },
     {
       "id": 6,
@@ -37,8 +36,8 @@
       "createAt": "2022-05-05"
     },
     {
-      "title": "수정합니다아",
-      "content": "7번 수정",
+      "title": "날짜 남아잇냐",
+      "content": "남아있냐구",
       "createAt": "2023-05-08",
       "id": 7
     },
@@ -61,8 +60,8 @@
       "createAt": "2021-12-20"
     },
     {
-      "title": "다시수정",
-      "content": "수정잘됨?",
+      "title": "again edit",
+      "content": "is it okay?",
       "createAt": "2023-11-04",
       "id": 11
     },
@@ -83,6 +82,12 @@
       "content": "왜 2만 나오냐",
       "createAt": 1681895149555,
       "id": 14
+    },
+    {
+      "title": "컴포넌트 분리",
+      "content": "컴포넌트 분리해서 다시 게시판 등록 테스트읏",
+      "createAt": 1681966043500,
+      "id": 15
     }
   ]
 }
