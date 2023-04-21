@@ -19,7 +19,7 @@
 			</template>
 		</PostForm>
 
-		<AppAlert :show="showAlert" :message="alertMessage" :type="alertType" />
+		<AppAlert :items="alerts"></AppAlert>
 	</div>
 </template>
 
@@ -45,7 +45,7 @@ const fetchPost = async () => {
 		setPost(data);
 	} catch (error) {
 		console.log(error);
-		myAlert('오류가 발생했습니다.', 'error');
+		myAlert(error.message);
 	}
 };
 
@@ -66,19 +66,16 @@ const edit = async () => {
 		}, 2000);
 	} catch (error) {
 		console.log(error);
+		myAlert(error.message);
 	}
 };
 
 // alert
-const showAlert = ref(false);
-const alertMessage = ref('');
-const alertType = ref('');
-const myAlert = (message, changeClass) => {
-	alertMessage.value = message;
-	alertType.value = changeClass;
-	showAlert.value = true;
+const alerts = ref([]);
+const myAlert = (message, type = 'error') => {
+	alerts.value.push({ message, type });
 	setTimeout(() => {
-		showAlert.value = false;
+		alerts.value.shift();
 	}, 2000);
 };
 
