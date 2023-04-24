@@ -1,8 +1,9 @@
 <template>
 	<div>
-		<h1>게시글 등록</h1>
+		<h1 @click="visibleForm = !visibleForm">게시글 등록</h1>
 		<hr class="my-4" />
 		<PostForm
+			v-if="visibleForm"
 			v-model:title="form.title"
 			v-model:content="form.content"
 			@submit.prevent="save"
@@ -47,6 +48,7 @@ const save = () => {
 };
 
 const goListPage = () => router.push({ name: 'PostList' });
+const visibleForm = ref(true);
 </script>
 
 <style></style>

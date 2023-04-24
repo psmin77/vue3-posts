@@ -3,7 +3,9 @@
 		<h1>{{ post.title }}</h1>
 		<p>{{ post.content }}</p>
 		<hr class="my-4" />
-		<p class="text-muted">{{ post.createAt }}</p>
+		<p class="text-muted">
+			{{ $dayjs(post.createAt).format('YYYY-MM-DD HH:mm:ss') }}
+		</p>
 
 		<hr class="my-4" />
 		<div class="row g-2">

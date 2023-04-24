@@ -10,13 +10,24 @@
 		<AppGrid :items="list" v-slot="{ item }" colClass="col-3">
 			<AppCard>{{ item }}</AppCard>
 		</AppGrid>
+
+		<hr class="my-4" />
+		<h2>{{ person.name }}</h2>
+		<div class="btn btn-primary" @click="person.say">click person</div>
 	</div>
 </template>
 
+<script>
+export default {
+	created() {
+		console.log(this.$person.name);
+		// this.$person.say();
+	},
+};
+</script>
+
 <script setup>
-import AppCard from '@/components/AppCard.vue';
-import AppGrid from '@/components/AppGrid.vue';
-import { ref } from 'vue';
+import { inject, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -25,6 +36,7 @@ const goAboutPage = () => {
 };
 
 const list = ref(['사과', '바나나', '포도', '딸기']);
+const person = inject('person');
 </script>
 
 <style></style>
