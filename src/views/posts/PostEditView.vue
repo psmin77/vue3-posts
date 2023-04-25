@@ -18,8 +18,6 @@
 				<button class="btn btn-primary">수정</button>
 			</template>
 		</PostForm>
-
-		<AppAlert :items="alerts"></AppAlert>
 	</div>
 </template>
 
@@ -28,7 +26,8 @@ import { getPostById, updatePost } from '@/api/posts';
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import PostForm from '@/components/posts/PostForm.vue';
-
+import { useAlert } from '@/composables/alert.js';
+const { myAlert, vSuccess } = useAlert();
 const route = useRoute();
 const router = useRouter();
 const id = route.params.id;
@@ -58,24 +57,12 @@ fetchPost();
 const edit = async () => {
 	try {
 		await updatePost(id, { ...form.value });
-		myAlert('수정이 완료되었습니다.', 'success');
-
-		setTimeout(() => {
-			router.push({ name: 'PostDetail', params: { id } });
-		}, 2000);
+		vSuccess('수정이 완료되었습니다.');
+		router.push({ name: 'PostDetail', params: { id } });
 	} catch (error) {
 		console.log(error);
 		myAlert(error.message);
 	}
-};
-
-// alert
-const alerts = ref([]);
-const myAlert = (message, type = 'error') => {
-	alerts.value.push({ message, type });
-	setTimeout(() => {
-		alerts.value.shift();
-	}, 2000);
 };
 
 const goDetailPage = () => router.push({ name: 'PostDetail', params: { id } });
