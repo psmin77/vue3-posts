@@ -1,5 +1,9 @@
 <template>
-	<div>
+	<AppLoading v-if="loading"></AppLoading>
+
+	<AppError v-else-if="error" :message="error.message"></AppError>
+
+	<div v-else>
 		<h1>{{ post.title }}</h1>
 		<p>{{ post.content }}</p>
 		<hr class="my-4" />
@@ -8,6 +12,8 @@
 		</p>
 
 		<hr class="my-4" />
+		<AppError v-if="removeError" :message="removeError.message"></AppError>
+
 		<div class="row g-2">
 			<div class="col-auto">
 				<button class="btn btn-outline-dark">이전글</button>
@@ -25,7 +31,21 @@
 				</button>
 			</div>
 			<div class="col-auto">
-				<button class="btn btn-outline-danger" @click="remove">삭제</button>
+				<button
+					class="btn btn-outline-danger"
+					@click="remove"
+					:disabled="removeLoading"
+				>
+					<template v-if="removeLoading">
+						<span
+							class="spinner-border spinner-border-sm"
+							role="status"
+							aria-hidden="true"
+						></span>
+						Loading...
+					</template>
+					<template v-else>삭제</template>
+				</button>
 			</div>
 		</div>
 	</div>
@@ -35,6 +55,8 @@
 import { getPostById, deletePost } from '@/api/posts';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+const error = ref(null);
+const loading = ref(false);
 
 const props = defineProps({
 	id: [String, Number],
@@ -44,10 +66,13 @@ const post = ref({});
 
 const fetchPost = async () => {
 	try {
+		loading.value = true;
 		const { data } = await getPostById(props.id);
 		setPost(data);
-	} catch (error) {
-		console.log(error);
+	} catch (err) {
+		error.value = err;
+	} finally {
+		loading.value = false;
 	}
 };
 
@@ -58,14 +83,19 @@ const setPost = ({ title, content, createAt }) => {
 };
 fetchPost();
 
+const removeError = ref(null);
+const removeLoading = ref(false);
 const remove = async () => {
 	try {
 		if (confirm('삭제하시겠습니까?')) {
+			removeLoading.value = true;
 			await deletePost(props.id);
 			router.push({ name: 'PostList' });
 		} else return;
-	} catch (error) {
-		console.log(error);
+	} catch (err) {
+		removeError.value = err;
+	} finally {
+		removeLoading.value = false;
 	}
 };
 

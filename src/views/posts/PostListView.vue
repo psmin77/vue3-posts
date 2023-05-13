@@ -8,21 +8,27 @@
 		></PostFilter>
 
 		<hr class="my-4" />
-		<AppGrid :items="posts" v-slot="{ item }" colClass="col-4">
-			<PostItem
-				:title="item.title"
-				:content="item.content"
-				:created-at="item.createAt"
-				@click="goPage(item.id)"
-				@modal="openModal(item)"
-			></PostItem>
-		</AppGrid>
+		<AppLoading v-if="loading"></AppLoading>
 
-		<AppPagination
-			:pageCount="pageCount"
-			:currentPage="params._page"
-			@page="page => (params._page = page)"
-		></AppPagination>
+		<AppError v-else-if="error" :message="error.message"></AppError>
+
+		<template v-else>
+			<AppGrid :items="posts" v-slot="{ item }" colClass="col-4">
+				<PostItem
+					:title="item.title"
+					:content="item.content"
+					:created-at="item.createAt"
+					@click="goPage(item.id)"
+					@modal="openModal(item)"
+				></PostItem>
+			</AppGrid>
+
+			<AppPagination
+				:pageCount="pageCount"
+				:currentPage="params._page"
+				@page="page => (params._page = page)"
+			></AppPagination>
+		</template>
 
 		<Teleport to="#modal">
 			<PostModal
@@ -50,9 +56,12 @@ import PostModal from '@/components/posts/PostModal.vue';
 import { getPosts } from '@/api/posts';
 import { computed, ref, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
+import AppLoading from '@/components/app/AppLoading.vue';
 
 const router = useRouter();
 const posts = ref([]);
+const error = ref(null);
+const loading = ref(false);
 const params = ref({
 	_sort: 'createAt',
 	_order: 'desc',
@@ -68,11 +77,14 @@ const pageCount = computed(() =>
 // 리스트 불러오기
 const fetchPosts = async () => {
 	try {
+		loading.value = true;
 		const { data, headers } = await getPosts(params.value);
 		posts.value = data;
 		totalCount.value = headers['x-total-count'];
-	} catch (error) {
-		console.log(error);
+	} catch (err) {
+		error.value = err;
+	} finally {
+		loading.value = false;
 	}
 };
 watchEffect(fetchPosts);

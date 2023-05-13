@@ -1,7 +1,13 @@
 <template>
-	<div>
+	<AppLoading v-if="loading"></AppLoading>
+
+	<AppError v-if="error" :message="error.message"></AppError>
+
+	<div v-else>
 		<h1>게시글 수정</h1>
 		<hr class="my-4" />
+		<AppError v-if="editError" :message="editError.message"></AppError>
+
 		<PostForm
 			v-model:title="form.title"
 			v-model:content="form.content"
@@ -15,7 +21,17 @@
 				>
 					취소
 				</button>
-				<button class="btn btn-primary">수정</button>
+				<button class="btn btn-primary" :disabled="editLoading">
+					<template v-if="editLoading">
+						<span
+							class="spinner-border spinner-border-sm"
+							role="status"
+							aria-hidden="true"
+						></span>
+						Loading...
+					</template>
+					<template v-else>수정</template>
+				</button>
 			</template>
 		</PostForm>
 	</div>
@@ -37,13 +53,17 @@ const form = ref({
 });
 
 // 상세내용 불러오기
+const error = ref(null);
+const loading = ref(false);
 const fetchPost = async () => {
 	try {
+		loading.value = true;
 		const { data } = await getPostById(id);
 		setPost(data);
-	} catch (error) {
-		console.log(error);
-		myAlert(error.message);
+	} catch (err) {
+		error.value = err;
+	} finally {
+		loading.value = false;
 	}
 };
 
@@ -54,14 +74,19 @@ const setPost = ({ title, content }) => {
 fetchPost();
 
 // 수정하기
+const editError = ref(null);
+const editLoading = ref(false);
 const edit = async () => {
 	try {
+		editLoading.value = true;
 		await updatePost(id, { ...form.value });
 		vSuccess('수정이 완료되었습니다.');
 		router.push({ name: 'PostDetail', params: { id } });
-	} catch (error) {
-		console.log(error);
-		myAlert(error.message);
+	} catch (err) {
+		editError.value = err;
+		myAlert(err.message);
+	} finally {
+		editLoading.value = false;
 	}
 };
 
