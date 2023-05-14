@@ -52,51 +52,39 @@
 </template>
 
 <script setup>
-import { getPostById, deletePost } from '@/api/posts';
+import { deletePost } from '@/api/posts';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-const error = ref(null);
-const loading = ref(false);
+import { useAxios } from '@/hooks/useAxios';
 
 const props = defineProps({
 	id: [String, Number],
 });
 const router = useRouter();
-const post = ref({});
 
-const fetchPost = async () => {
-	try {
-		loading.value = true;
-		const { data } = await getPostById(props.id);
-		setPost(data);
-	} catch (err) {
-		error.value = err;
-	} finally {
-		loading.value = false;
-	}
-};
-
-const setPost = ({ title, content, createAt }) => {
-	post.value.title = title;
-	post.value.content = content;
-	post.value.createAt = createAt;
-};
-fetchPost();
-
-const removeError = ref(null);
-const removeLoading = ref(false);
-const remove = async () => {
-	try {
-		if (confirm('삭제하시겠습니까?')) {
-			removeLoading.value = true;
-			await deletePost(props.id);
+const { data: post, error, loading } = useAxios(`/posts/${props.id}`);
+const {
+	error: removeError,
+	loading: removeLoading,
+	execute,
+} = useAxios(
+	`/posts/${props.id}`,
+	{ method: 'delete' },
+	{
+		immediate: false,
+		onSuccess: () => {
 			router.push({ name: 'PostList' });
-		} else return;
-	} catch (err) {
-		removeError.value = err;
-	} finally {
-		removeLoading.value = false;
-	}
+		},
+		onError: err => {
+			removeError.value = err;
+		},
+	},
+);
+
+const remove = async () => {
+	if (confirm('삭제하시겠습니까?')) {
+		execute();
+	} else return;
 };
 
 const goListPage = () => router.push({ name: 'PostList' });

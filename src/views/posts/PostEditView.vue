@@ -9,8 +9,8 @@
 		<AppError v-if="editError" :message="editError.message"></AppError>
 
 		<PostForm
-			v-model:title="form.title"
-			v-model:content="form.content"
+			v-model:title="post.title"
+			v-model:content="post.content"
 			@submit.prevent="edit"
 		>
 			<template #actions>
@@ -38,56 +38,42 @@
 </template>
 
 <script setup>
-import { getPostById, updatePost } from '@/api/posts';
-import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import PostForm from '@/components/posts/PostForm.vue';
 import { useAlert } from '@/composables/alert.js';
+import { useAxios } from '@/hooks/useAxios';
+
 const { myAlert, vSuccess } = useAlert();
 const route = useRoute();
 const router = useRouter();
 const id = route.params.id;
-const form = ref({
-	title: null,
-	content: null,
-});
 
-// 상세내용 불러오기
-const error = ref(null);
-const loading = ref(false);
-const fetchPost = async () => {
-	try {
-		loading.value = true;
-		const { data } = await getPostById(id);
-		setPost(data);
-	} catch (err) {
-		error.value = err;
-	} finally {
-		loading.value = false;
-	}
-};
+const { data: post, error, loading } = useAxios(`/posts/${id}`);
 
-const setPost = ({ title, content }) => {
-	form.value.title = title;
-	form.value.content = content;
-};
-fetchPost();
-
-// 수정하기
-const editError = ref(null);
-const editLoading = ref(false);
+const {
+	error: editError,
+	loading: editLoading,
+	execute,
+} = useAxios(
+	`/posts/${id}`,
+	{
+		method: 'patch',
+	},
+	{
+		immediate: false,
+		onSuccess: () => {
+			vSuccess('수정이 완료되었습니다.');
+			router.push({ name: 'PostDetail', params: { id } });
+		},
+		onError: err => {
+			myAlert(err.message);
+		},
+	},
+);
 const edit = async () => {
-	try {
-		editLoading.value = true;
-		await updatePost(id, { ...form.value });
-		vSuccess('수정이 완료되었습니다.');
-		router.push({ name: 'PostDetail', params: { id } });
-	} catch (err) {
-		editError.value = err;
-		myAlert(err.message);
-	} finally {
-		editLoading.value = false;
-	}
+	execute({
+		...post.value,
+	});
 };
 
 const goDetailPage = () => router.push({ name: 'PostDetail', params: { id } });

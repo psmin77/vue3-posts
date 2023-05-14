@@ -53,15 +53,12 @@ import PostItem from '@/components/posts/PostItem.vue';
 import PostFilter from '@/components/posts/PostFilter.vue';
 import PostDetailView from './PostDetailView.vue';
 import PostModal from '@/components/posts/PostModal.vue';
-import { getPosts } from '@/api/posts';
-import { computed, ref, watchEffect } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import AppLoading from '@/components/app/AppLoading.vue';
+import { useAxios } from '@/hooks/useAxios';
 
 const router = useRouter();
-const posts = ref([]);
-const error = ref(null);
-const loading = ref(false);
 const params = ref({
 	_sort: 'createAt',
 	_order: 'desc',
@@ -69,25 +66,19 @@ const params = ref({
 	_limit: 6,
 	title_like: '',
 });
-const totalCount = ref(0); // pagination
+
+const {
+	response,
+	data: posts,
+	error,
+	loading,
+} = useAxios('/posts', { params });
+
+// pagination
+const totalCount = computed(() => response.value.headers['x-total-count']);
 const pageCount = computed(() =>
 	Math.ceil(totalCount.value / params.value._limit),
 );
-
-// 리스트 불러오기
-const fetchPosts = async () => {
-	try {
-		loading.value = true;
-		const { data, headers } = await getPosts(params.value);
-		posts.value = data;
-		totalCount.value = headers['x-total-count'];
-	} catch (err) {
-		error.value = err;
-	} finally {
-		loading.value = false;
-	}
-};
-watchEffect(fetchPosts);
 
 // modal
 const show = ref(false);

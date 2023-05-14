@@ -37,33 +37,33 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { createPost } from '@/api/posts';
 import PostForm from '@/components/posts/PostForm.vue';
 import { useAlert } from '@/composables/alert.js';
+import { useAxios } from '@/hooks/useAxios';
 const { myAlert, vSuccess } = useAlert();
 const router = useRouter();
 const form = ref({
 	title: null,
 	content: null,
 });
-const error = ref(null);
-const loading = ref(false);
-
+const { error, loading, execute } = useAxios(
+	'/posts',
+	{
+		method: 'post',
+	},
+	{
+		immediate: false,
+		onSuccess: () => {
+			router.push({ name: 'PostList' });
+			vSuccess('등록이 완료되었습니다.');
+		},
+		onError: err => {
+			myAlert(err.message);
+		},
+	},
+);
 const save = async () => {
-	try {
-		loading.value = true;
-		await createPost({
-			...form.value,
-			createAt: Date.now(),
-		});
-		router.push({ name: 'PostList' });
-		vSuccess('등록이 완료되었습니다.');
-	} catch (err) {
-		error.value = err;
-		myAlert(err.message);
-	} finally {
-		loading.value = false;
-	}
+	execute({ ...form.value, createAt: Date.now() });
 };
 
 const goListPage = () => router.push({ name: 'PostList' });
