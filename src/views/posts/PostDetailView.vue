@@ -52,17 +52,17 @@
 </template>
 
 <script setup>
-import { deletePost } from '@/api/posts';
-import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAxios } from '@/hooks/useAxios';
+import { computed } from 'vue';
 
 const props = defineProps({
 	id: [String, Number],
 });
 const router = useRouter();
+const url = computed(() => `/posts/${props.id}`);
 
-const { data: post, error, loading } = useAxios(`/posts/${props.id}`);
+const { data: post, error, loading } = useAxios(url);
 const {
 	error: removeError,
 	loading: removeLoading,
