@@ -36,6 +36,11 @@
 							>Nested</RouterLink
 						>
 					</li>
+					<li class="nav-item">
+						<RouterLink class="nav-link" active-class="active" to="/my"
+							>MyPage</RouterLink
+						>
+					</li>
 				</ul>
 
 				<form class="d-flex">

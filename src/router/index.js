@@ -10,6 +10,7 @@ import NestedView from '@/views/nested/NestedView.vue';
 import NestedOneView from '@/views/nested/NestedOneView.vue';
 import NestedTwoView from '@/views/nested/NestedTwoView.vue';
 import NestedHomeView from '@/views/nested/NestedHomeView.vue';
+import MyPageVue from '@/views/MyPage.vue';
 
 const routes = [
 	{ path: '/', name: 'home', component: HomeView },
@@ -35,12 +36,32 @@ const routes = [
 			{ path: 'two', name: 'NestedTwo', component: NestedTwoView },
 		],
 	},
+	{
+		path: '/my',
+		name: 'MyPage',
+		component: MyPageVue,
+		beforeEnter: [removeQueryString],
+	},
 ];
+function removeQueryString(to) {
+	if (Object.keys(to.query).length > 0) {
+		return { path: to.path, query: {} };
+	}
+}
 
 const router = createRouter({
 	history: createWebHistory(),
 	// history: createWebHashHistory(),
 	routes,
 });
+
+// router.beforeEach((to, from) => {
+// 	console.log('이동할 페이지 to: ', to);
+// 	console.log('현재 페이지 from: ', from);
+// 	if (to.name === 'MyPage') {
+// 		// return false;
+// 		return { name: 'home' };
+// 	}
+// });
 
 export default router;
