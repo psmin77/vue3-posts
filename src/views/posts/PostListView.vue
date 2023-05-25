@@ -4,7 +4,8 @@
 		<hr class="my-4" />
 		<PostFilter
 			v-model:title="params.title_like"
-			v-model:limit="params._limit"
+			:limit="params._limit"
+			@update:limit="changeLimit"
 		></PostFilter>
 
 		<hr class="my-4" />
@@ -12,8 +13,16 @@
 
 		<AppError v-else-if="error" :message="error.message"></AppError>
 
+		<template v-else-if="!isExist">
+			<p class="text-center py-5 text-muted">No Results</p>
+		</template>
+
 		<template v-else>
-			<AppGrid :items="posts" v-slot="{ item }" colClass="col-4">
+			<AppGrid
+				:items="posts"
+				v-slot="{ item }"
+				colClass="col-12 col-md-6 col-lg-4"
+			>
 				<PostItem
 					:title="item.title"
 					:content="item.content"
@@ -71,12 +80,19 @@ const params = ref({
 	title_like: '',
 });
 
+const changeLimit = value => {
+	params.value._limit = value;
+	params.value._page = 1;
+};
+
 const {
 	response,
 	data: posts,
 	error,
 	loading,
 } = useAxios('/posts', { params });
+
+const isExist = computed(() => posts.value && posts.value.length > 0);
 
 // pagination
 const totalCount = computed(() => response.value.headers['x-total-count']);

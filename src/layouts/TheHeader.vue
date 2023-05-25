@@ -1,7 +1,7 @@
 <template>
 	<nav class="navbar navbar-expand-sm navbar-dark bg-primary">
 		<div class="container-fluid">
-			<a class="navbar-brand" href="#">GYM COODING</a>
+			<RouterLink class="navbar-brand" to="/">GYM COODING</RouterLink>
 			<button
 				class="navbar-toggler"
 				type="button"
